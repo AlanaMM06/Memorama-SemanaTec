@@ -1,9 +1,14 @@
 // Lógica del memorama-SRV
 
-const Pares=new Map([
-    ["Manzana",'img-1'],["Mango",'img-2'],["Sandia",'img-3'],
-    ["Naranja",'img-4'],["Mandarina",'img-5'],["Melón",'img-6'],
-    ["Uva",'img-7'],["Platano",'img-8']
+const Pares = new Map([
+    ["Manzana",'🍎'],
+    ["Mango",'🥭'],
+    ["Sandia",'🍉'],
+    ["Naranja",'🍊'],
+    ["Cherry",'🍒'],
+    ["Melón",'🍈'],
+    ["Uva",'🍇'],
+    ["Platano",'🍌']
 ]);
 
 let mezcla=Array.from(Pares.values()).concat(Array.from(Pares.values()));
