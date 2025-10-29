@@ -16,6 +16,7 @@ mezcla=mezcla.sort(()=>Math.random()-0.5);
 
 let primera=null;
 let second=null;
+let lockBoard=false;
 
 let movimientos=0;
 let aciertos=0;
@@ -39,16 +40,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
 
     function renderBoard(){
-        // limpiar
         boardEl.innerHTML='';
-        // mezcla ya está definida arriba
         mezcla.forEach((val, idx)=>{
             const card=document.createElement('div');
             card.className='card';
             card.tabIndex=0;
             card.dataset.value=val;
             card.dataset.index=idx;
-            // contenido mínimo: oculto por defecto, mostrar valor cuando se voltea
             card.textContent='?';
             card.addEventListener('click', onCardClick);
             card.addEventListener('keydown', (e)=>{ if(e.key==='Enter') onCardClick.call(card,e); });
@@ -64,8 +62,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
     function onCardClick(e){
         const card=this;
+        if (lockBoard) return;
         if(card.classList.contains('matched') || card.classList.contains('flipped')) return;
-        // flip visual
+
         card.classList.add('flipped');
         card.textContent=card.dataset.value;
 
@@ -73,12 +72,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
             primera=card;
             return;
         }
-        if(primera===card) return; // misma carta
+
+        if(primera===card) return;
         second=card;
         movimientos++;
         updateCounters();
+        lockBoard=true;
 
-        // comparar valores
         if(primera.dataset.value===second.dataset.value){
             primera.classList.add('matched');
             second.classList.add('matched');
@@ -86,17 +86,16 @@ document.addEventListener('DOMContentLoaded', ()=>{
             pointerCounter+=50;
             primera=null; second=null;
             updateCounters();
-            // Trigger points animation
             pointsEl.classList.add('points-change');
             setTimeout(() => pointsEl.classList.remove('points-change'), 500);
-            // opcional: comprobar fin de juego
+            lockBoard=false;
         } else {
             if (pointerCounter > 0) pointerCounter -= 10;
-            // dejar ver y voltear de nuevo
             setTimeout(()=>{
                 if(primera) { primera.classList.remove('flipped'); primera.textContent='?'; }
                 if(second) { second.classList.remove('flipped'); second.textContent='?'; }
                 primera=null; second=null;
+                lockBoard=false;
             }, 800);
         }
     }
@@ -106,7 +105,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
         gameSection.style.display='block';
         playerNameSpan.textContent=username||'Jugador';
         resetCounters();
-        // mezclar de nuevo para nueva partida
         mezcla=mezcla.sort(()=>Math.random()-0.5);
         renderBoard();
     }
@@ -114,7 +112,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
     function showLogin(){
         loginSection.style.display='block';
         gameSection.style.display='none';
-        // limpiar tablero
         boardEl.innerHTML='';
         loginError.textContent='';
         primera=null; second=null;
@@ -124,7 +121,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
         ev.preventDefault();
         const username=(document.getElementById('username')||{}).value||'';
         const password=(document.getElementById('password')||{}).value||'';
-        // validación mínima: ambos no vacíos
         if(username.trim() && password.trim()){
             showGame(username.trim());
         } else {
@@ -135,7 +131,5 @@ document.addEventListener('DOMContentLoaded', ()=>{
     guestBtn.addEventListener('click',()=> showGame('Invitado'));
     logoutBtn.addEventListener('click',()=> showLogin());
 
-    // estado inicial
     showLogin();
 });
-
