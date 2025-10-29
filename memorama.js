@@ -86,6 +86,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
             pointerCounter+=50;
             primera=null; second=null;
             updateCounters();
+            // Trigger points animation
+            pointsEl.classList.add('points-change');
+            setTimeout(() => pointsEl.classList.remove('points-change'), 500);
             // opcional: comprobar fin de juego
         } else {
             if (pointerCounter > 0) pointerCounter -= 10;
