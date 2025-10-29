@@ -1,11 +1,14 @@
 // Lógica del memorama-SRV
 
-const Pares=new Map([
-    ["Manzana1",'img-1'],["Mango1",'img-2'],["Sandia1",'img-3'],
-    ["Naranja1",'img-4'],["Mandarina1",'img-5'],["Melón1",'img-6'],
-    ["Uva1",'img-7'],["Platano1",'img-8'],["Manzana2",'img-1'],["Mango2",'img-2'],["Sandia2",'img-3'],
-    ["Naranja2",'img-4'],["Mandarina2",'img-5'],["Melón2",'img-6'],
-    ["Uva2",'img-7'],["Platano2",'img-8']
+const Pares = new Map([
+    ["Manzana",'🍎'],
+    ["Mango",'🥭'],
+    ["Sandia",'🍉'],
+    ["Naranja",'🍊'],
+    ["Cherry",'🍒'],
+    ["Melón",'🍈'],
+    ["Uva",'🍇'],
+    ["Platano",'🍌']
 ]);
 
 let mezcla=Array.from(Pares.values()).concat(Array.from(Pares.values()));
@@ -17,43 +20,115 @@ let second=null;
 let movimientos=0;
 let aciertos=0;
 
+// --- DOM / Login integration (minimal, non-intrusive) ---
+document.addEventListener('DOMContentLoaded', ()=>{
+    const loginSection=document.getElementById('login-section');
+    const gameSection=document.getElementById('game-section');
+    const loginForm=document.getElementById('login-form');
+    const guestBtn=document.getElementById('guest-btn');
+    const logoutBtn=document.getElementById('logout-btn');
+    const playerNameSpan=document.getElementById('player-name');
+    const loginError=document.getElementById('login-error');
+    const boardEl=document.getElementById('board');
+    const movesEl=document.getElementById('moves');
+    const scoreEl=document.getElementById('score');
 
-function voltear(idCarta){
-    const carta=mezcla.find(([id])=>id===idCarta);
-    if(!card){
-        //Mensaje de error 
-        console.log("No se encontro :(");
-        return;
+    function resetCounters(){
+        movimientos=0; aciertos=0; movesEl.textContent=movimientos; scoreEl.textContent=aciertos;
     }
-    if(primera && primera[0]==idCarta){
-        //Se volteo la misma
-        return;  
+
+    function renderBoard(){
+        // limpiar
+        boardEl.innerHTML='';
+        // mezcla ya está definida arriba
+        mezcla.forEach((val, idx)=>{
+            const card=document.createElement('div');
+            card.className='card';
+            card.tabIndex=0;
+            card.dataset.value=val;
+            card.dataset.index=idx;
+            // contenido mínimo: oculto por defecto, mostrar valor cuando se voltea
+            card.textContent='?';
+            card.addEventListener('click', onCardClick);
+            card.addEventListener('keydown', (e)=>{ if(e.key==='Enter') onCardClick.call(card,e); });
+            boardEl.appendChild(card);
+        });
     }
-    if(!primera){
-        primera=carta;
-    }else{
-        segunda=carta;
+
+    function updateCounters(){
+        movesEl.textContent=movimientos;
+        scoreEl.textContent=aciertos;
+    }
+
+    function onCardClick(e){
+        const card=this;
+        if(card.classList.contains('matched') || card.classList.contains('flipped')) return;
+        // flip visual
+        card.classList.add('flipped');
+        card.textContent=card.dataset.value;
+
+        if(!primera){
+            primera=card;
+            return;
+        }
+        if(primera===card) return; // misma carta
+        second=card;
         movimientos++;
+        updateCounters();
 
+        // comparar valores
+        if(primera.dataset.value===second.dataset.value){
+            primera.classList.add('matched');
+            second.classList.add('matched');
+            aciertos++;
+            primera=null; second=null;
+            updateCounters();
+            // opcional: comprobar fin de juego
+        } else {
+            // dejar ver y voltear de nuevo
+            setTimeout(()=>{
+                if(primera) { primera.classList.remove('flipped'); primera.textContent='?'; }
+                if(second) { second.classList.remove('flipped'); second.textContent='?'; }
+                primera=null; second=null;
+            }, 800);
+        }
     }
-}
 
-function verificarPareja(){
-    if(primera[1]==segunda[1]){
-        aciertos++;
-        //Se quedan estaticas
-        console.log("Hay match");
-    }else{
-        console.log("No");
+    function showGame(username){
+        loginSection.style.display='none';
+        gameSection.style.display='block';
+        playerNameSpan.textContent=username||'Jugador';
+        resetCounters();
+        // mezclar de nuevo para nueva partida
+        mezcla=mezcla.sort(()=>Math.random()-0.5);
+        renderBoard();
     }
-    primera=null;
-    segunda=null;
 
-    GameOver();
-}
+    function showLogin(){
+        loginSection.style.display='block';
+        gameSection.style.display='none';
+        // limpiar tablero
+        boardEl.innerHTML='';
+        loginError.textContent='';
+        primera=null; second=null;
+    }
 
-function GameOver(){
-    if(aciertos==mezcla.length/2){
-        console.log(`Ganaste en ${movimientos} movimientos`);
-    } 
-}
+    loginForm.addEventListener('submit',(ev)=>{
+        ev.preventDefault();
+        const username=(document.getElementById('username')||{}).value||'';
+        const password=(document.getElementById('password')||{}).value||'';
+        // validación mínima: ambos no vacíos
+        if(username.trim() && password.trim()){
+            showGame(username.trim());
+        } else {
+            loginError.textContent='Introduce usuario y contraseña (cualquier texto válido).';
+        }
+    });
+
+    guestBtn.addEventListener('click',()=> showGame('Invitado'));
+    logoutBtn.addEventListener('click',()=> showLogin());
+
+    // estado inicial
+    showLogin();
+});
+
