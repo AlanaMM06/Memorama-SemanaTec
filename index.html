@@ -4,19 +4,76 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Memorama - Login</title>
+    <link rel="stylesheet" href="login_style.css">
+    <link rel="stylesheet" href="game_style.css">
     <style>
-      body{font-family:system-ui,Segoe UI,Arial;margin:0;padding:20px;background:#f7f7f7}
-      .center{max-width:900px;margin:0 auto}
       #game-section{display:none}
       #board{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
-      .card{background:#2b2b2b;color:#fff;height:90px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:6px;user-select:none}
-      .card.flipped{background:#fff;color:#000}
+      .card{background:#2b2b2b;color:#fff;height:90px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:6px;user-select:none;font-size:2em}
       header{display:flex;justify-content:space-between;align-items:center}
       .small{font-size:0.9rem;color:#333}
-      form{background:#fff;padding:16px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.06)}
-      input{padding:8px;margin:6px 0;width:100%;box-sizing:border-box}
-      button{padding:8px 12px}
       #login-error{color:#b00020;margin-top:6px}
+      
+      /* Additional styles for game section */
+      #game-section { 
+          background: white;
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+          max-width: 800px;
+          margin: 0 auto;
+      }
+      
+      /* Center the content */
+      .center {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          max-width: 900px;
+          margin: 0 auto;
+      }
+
+      /* Game stats styling */
+      .game-stats {
+          display: flex;
+          justify-content: space-around;
+          margin-top: 20px;
+          padding: 15px;
+          background: #f8f9fa;
+          border-radius: 8px;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      }
+
+      .stat-item {
+          font-size: 1.1em;
+          color: #333;
+      }
+
+      .stat-item span {
+          font-weight: bold;
+          color: #007bff;
+      }
+
+      /* Logout button styling */
+      .logout-btn {
+          background-color: #dc3545;
+          color: white;
+          padding: 8px 16px;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: background-color 0.3s;
+      }
+
+      .logout-btn:hover {
+          background-color: #c82333;
+      }
+
+      /* Center the game title */
+      h1, h2 {
+          text-align: center;
+          color: #2c3e50;
+      }
     </style>
   </head>
   <body>
@@ -24,32 +81,40 @@
       <h1>Memorama</h1>
 
       <section id="login-section">
-        <form id="login-form">
-          <label>Usuario
-            <input id="username" name="username" autocomplete="username" />
-          </label>
-          <label>Contraseña
-            <input id="password" name="password" type="password" autocomplete="current-password" />
-          </label>
-          <div style="display:flex;gap:8px">
-            <button type="submit">Iniciar sesión</button>
-            <button type="button" id="guest-btn">Jugar como invitado</button>
-          </div>
-          <div id="login-error" role="status" aria-live="polite"></div>
-        </form>
+        <div class="login-container">
+          <h2>🎮 Bienvenido al Memorama</h2>
+          <form id="login-form">
+            <div class="input-group">
+              <label for="username">Nombre de Usuario:</label>
+              <input id="username" name="username" type="text" autocomplete="username" />
+            </div>
+            <div class="input-group">
+              <label for="password">Contraseña:</label>
+              <input id="password" name="password" type="password" autocomplete="current-password" />
+            </div>
+            <button type="submit" class="login-btn">Iniciar sesión</button>
+            <div id="login-error" role="status" aria-live="polite"></div>
+            <hr>
+            <button type="button" id="guest-btn" class="guest-btn">Jugar como invitado</button>
+          </form>
+        </div>
       </section>
 
       <section id="game-section">
         <header>
-          <div class="small">Bienvenido, <span id="player-name"></span></div>
+          <div class="small">¡Bienvenido, <span id="player-name"></span>! 🎮</div>
           <div>
-            <button id="logout-btn">Cerrar sesión</button>
+            <button id="logout-btn" class="logout-btn">Cerrar sesión</button>
           </div>
         </header>
 
         <div id="board" aria-live="polite"></div>
 
-        <div style="margin-top:12px" class="small">Movimientos: <span id="moves">0</span> · Aciertos: <span id="score">0</span> · Puntos: <span id="points">0</span></div>
+        <div class="game-stats">
+          <div class="stat-item">Movimientos: <span id="moves">0</span></div>
+          <div class="stat-item">Aciertos: <span id="score">0</span></div>
+          <div class="stat-item">Puntos: <span id="points">0</span></div>
+        </div>
       </section>
     </div>
 
