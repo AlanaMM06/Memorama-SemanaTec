@@ -1,5 +1,5 @@
 // Lógica del memorama-SRV
-
+let pointerCounter=0;
 const Pares = new Map([
     ["Manzana",'🍎'],
     ["Mango",'🥭'],
@@ -31,10 +31,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const loginError=document.getElementById('login-error');
     const boardEl=document.getElementById('board');
     const movesEl=document.getElementById('moves');
+    const pointsEl=document.getElementById('points');
     const scoreEl=document.getElementById('score');
 
     function resetCounters(){
-        movimientos=0; aciertos=0; movesEl.textContent=movimientos; scoreEl.textContent=aciertos;
+        movimientos=0; aciertos=0; movesEl.textContent=movimientos; scoreEl.textContent=aciertos; pointerCounter=0; pointsEl.textContent=pointerCounter;    
     }
 
     function renderBoard(){
@@ -58,6 +59,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     function updateCounters(){
         movesEl.textContent=movimientos;
         scoreEl.textContent=aciertos;
+        pointsEl.textContent=pointerCounter;
     }
 
     function onCardClick(e){
@@ -81,10 +83,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
             primera.classList.add('matched');
             second.classList.add('matched');
             aciertos++;
+            pointerCounter+=50;
             primera=null; second=null;
             updateCounters();
             // opcional: comprobar fin de juego
         } else {
+            if (pointerCounter > 0) pointerCounter -= 10;
             // dejar ver y voltear de nuevo
             setTimeout(()=>{
                 if(primera) { primera.classList.remove('flipped'); primera.textContent='?'; }
