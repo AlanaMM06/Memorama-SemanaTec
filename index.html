@@ -69,6 +69,22 @@
           background-color: #c82333;
       }
 
+      /* Manual button styling */
+      .manual-btn {
+          background-color: #28a745;
+          color: white;
+          padding: 8px 16px;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: background-color 0.3s;
+          margin-right: 10px;
+      }
+
+      .manual-btn:hover {
+          background-color: #218838;
+      }
+
       /* Center the game title */
       h1, h2 {
           text-align: center;
@@ -104,6 +120,7 @@
         <header>
           <div class="small">¡Bienvenido, <span id="player-name"></span>! 🎮</div>
           <div>
+            <button id="manual-btn" class="manual-btn" onclick="window.open('manual-usuario.html', '_blank')">Manual de Usuario</button>
             <button id="logout-btn" class="logout-btn">Cerrar sesión</button>
           </div>
         </header>
